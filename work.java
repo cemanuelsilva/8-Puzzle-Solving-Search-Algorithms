@@ -18,48 +18,78 @@ public class work {
 
     }
 
+    private static boolean solved(int [][]configMatrix, int [][]finalMatrix){
+
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                if(configMatrix[i][j] != finalMatrix[i][j]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     
-    private int findPos0(int [][]configMatrix){
+    private static int[] findPos0(int [][]configMatrix){
 
         int pos0[] = new int[2];
 
-        for(int i = 0; i < configMatrix.size(); i++){
+        for(int i = 0; i < 4; i++){
             
-            for(int j = i+1; j < configMatrix.size(); j++){
+            for(int j = 0; j < 4; j++){
             
                 if(configMatrix[i][j] == 0){
                     
-                    pos[0] = j;
-                    pos[j] = i;
+                    pos0[0] = j;
+                    pos0[1] = i;
 
                     }
                     
                 }
             }
 
+            System.out.println(pos0[0] + "" + pos0[1]);
             return pos0;
     }
 
 
-    //TODO FIX THIS
-    private void possibleMoves(int []pos0){
-        // pos0[0]: X COORDINATOR  ;   pos0[1]: Y COORDINATOR
-        switch(){
-        case UP:
-            pos0[1] > 0;
-        case DOWN:
-            pos0[1] < 3;
-        case LEFT:
-            pos0[0] > 0;
-        case RIGHT:
-            pos0[0] < 3;
+    private static LinkedList<Direction> possibleMoves(int pos0[]){
 
-        }
+        LinkedList<Direction> moves = new LinkedList<Direction>();
+
+        if(pos0[1] > 0) moves.add(Direction.UP);
+        if(pos0[1] < 3) moves.add(Direction.DOWN);
+        if(pos0[0] > 0) moves.add(Direction.LEFT);
+        if(pos0[0] < 3) moves.add(Direction.RIGHT);
+
+        return moves;
     }
 
 
-    void MakeMove(){
+    void MakeMove(Direction d, int [][]configMatrix, int []pos0){
+        // pos0[0]: X COORDINATOR  ;   pos0[1]: Y COORDINATOR
+        int temp = 0;
 
+        switch(d){
+            case UP:
+                configMatrix[pos0[0] - 1][pos0[1]] = temp;
+                configMatrix[pos0[0] - 1][pos0[1]] = pos0[0];
+                configMatrix[pos0[0]][pos0[1]] = temp;
+            case DOWN:
+                configMatrix[pos0[0] + 1][pos0[1]] = temp;
+                configMatrix[pos0[0] + 1][pos0[1]] = pos0[0];
+                configMatrix[pos0[0]][pos0[1]] = temp;
+            case LEFT:
+                configMatrix[pos0[0]][pos0[1] - 1] = temp;
+                configMatrix[pos0[0]][pos0[1] - 1] = pos0[0];
+                configMatrix[pos0[0]][pos0[1]] = temp;
+            case RIGHT:
+                configMatrix[pos0[0]][pos0[1] + 1] = temp;
+                configMatrix[pos0[0]][pos0[1] + 1] = pos0[0];
+                configMatrix[pos0[0]][pos0[1]] = temp;
+    
+            }
     }
 
 
@@ -75,17 +105,16 @@ public class work {
             }
         }
         
-        //DEBUG VERIFICAR LISTA
         
-        //for(int i = 0; i < matrixTemp.size(); i++) {   
-        //    System.out.print(matrixTemp.get(i) + " ");
-        //}
-
         return matrixTemp;
         
     }
 
-    private static boolean verifyParidade(ArrayList<Integer> configMatrix){
+    //-------------------------------------------------//
+    // VERIFICAR SE É POSSIVEL CHEGAR Á CONFIG FINAL   //
+    //-------------------------------------------------//
+
+    private static boolean verifyParidade(ArrayList<Integer> configMatrix, int [][]configMatrix2){
 
         int somaParidades = 0;
         int somaTemp = 0;
@@ -113,14 +142,13 @@ public class work {
         }
 
 
-        //RESOLVER, ISTO É UM ARRAYLIST, SECALHAR É SUPOSTO SER UMA LISTA
+        
 
-        for(int i = 0; i < configMatrix.size(); i++){
-            //System.out.println("ENTROU CICLO I");
-            for(int j = i+1; j < configMatrix.size(); j++){
-                //System.out.println(matrixTemp.get(j));
-                //System.out.println(matrixTemp.get(i));
-                if(configMatrix[i][j] == 0){
+        for(int i = 0; i < 3; i++){
+            
+            for(int j = 0; j < 3; j++){
+                
+                if(configMatrix2[i][j] == 0){
                     if(i % 2 == 0){
                         flagBlankRow = true;
                     }
@@ -153,15 +181,15 @@ public class work {
         configuracaoInicial = conversion2Dto1D(configInicial);
         configuracaoFinal = conversion2Dto1D(configFinal);
 
-        result_configInicial = verifyParidade(configuracaoInicial);
-        result_configFinal = verifyParidade(configuracaoFinal);
+        result_configInicial = verifyParidade(configuracaoInicial, configInicial);
+        result_configFinal = verifyParidade(configuracaoFinal, configFinal);
 
         if(result_configInicial == result_configFinal){
             System.out.println("EXISTE SOLUÇÃO!");
             return true;
         }
         else{
-            System.out.println("UPS, F SOLUÇÃO!");
+            System.out.println("NÃO É POSSIVEL CHEGAR A UMA CONFIGURAÇÃO FINAL!");
             return false;
         }
 
@@ -176,7 +204,14 @@ public class work {
         return "boas";
     }
 */
+    //PRINT SUPPORT//
+    //-------------------------------------------------//
 
+    public static void print1D(int mat[]){
+        for(int i=0; i < mat.length; i++){
+            System.out.println(i);
+        }
+    }
 
      public static void print2D(int mat[][])
     {
@@ -188,6 +223,8 @@ public class work {
             System.out.println(Arrays.toString(row));
     }
 
+    //-------------------------------------------------//
+
     public static void main(String[] args){
 
         Scanner sc = new Scanner(System.in);
@@ -195,6 +232,8 @@ public class work {
         int[][] initialConfig = new int[4][4];
         int[][] finalConfig = new int[4][4];
 
+        //LOAD//
+        
         for(int i=0; i<4; i++){
             for(int j=0; j<4; j++){ 
             initialConfig[i][j] = sc.nextInt();
@@ -207,6 +246,7 @@ public class work {
             }
         }
 
+        //-------------------------------------------------//
 
         //print2D(initialConfig);
         System.out.println("-------------------");
