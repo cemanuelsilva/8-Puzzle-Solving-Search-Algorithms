@@ -227,6 +227,7 @@ public class work {
     // General                                         //
     //-------------------------------------------------//
 
+    /*
     private String GeneralSearchALgorithm(int [][]configInicial, int [][]configFinal){
         if (thereIsNoSolution(configInicial,configFinal) == false){
             return "It is impossible to reach a solution";
@@ -242,7 +243,7 @@ public class work {
 
         }
     }
-
+    */
 
     //-------------------------------------------------//
     // Algoritmos de busca                             //
