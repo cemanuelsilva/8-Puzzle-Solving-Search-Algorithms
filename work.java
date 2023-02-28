@@ -2,68 +2,132 @@ import java.util.*;
 
 enum Direction {  LEFT, UP, RIGHT, DOWN }
 
+
 public class work {
 
+   static class Game{
 
-    private class Game{
-
+    int[] pos0 = new int[2];
     int configInicial[][];
-    int configFinal[][];
-    int pos_zero;
-
-    Game(int [][]configInicial, int [][]configFinal){
+    
+    Game(int [][]configInicial){
         this.configInicial = configInicial;
-        this.configFinal = configFinal;
+
+        pos0 = findPos0();
     }
-
-    }
-
-
+    
     //-------------------------------------------------//
     // Suporte class                                   //
     //-------------------------------------------------//
 
-    private static boolean solved(int [][]configMatrix, int [][]finalMatrix){
+    private boolean solved(int [][]finalMatrix){
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                if(configMatrix[i][j] != finalMatrix[i][j]){
+                if(configInicial[i][j] != finalMatrix[i][j]){
+                    //System.out.println("Nop");
                     return false;
                 }
             }
         }
+        //System.out.println("Sim");
         return true;
     }
-
     
-    private static int[] findPos0(int [][]configMatrix){
+    private int[] findPos0(){
 
-        int pos0[] = new int[2];
+        int pos_0[] = new int[2];
 
         for(int i = 0; i < 4; i++){
             
             for(int j = 0; j < 4; j++){
             
-                if(configMatrix[i][j] == 0){
+                if(configInicial[i][j] == 0){
                     
-                    pos0[0] = j;
-                    pos0[1] = i;
+                    pos_0[0] = j;
+                    pos_0[1] = i;
 
-                    System.out.println(pos0[0] + "" + pos0[1]);
-                    return pos0;
+                    //System.out.println(pos_0[0] + " " + pos_0[1]);
+                    return pos_0;
 
-                    }
-                    
+                }
+                
                 }
             }
-
-            System.out.println("Return 0: Not found!");
+            
+            //System.out.println("Return 0: Not found!");
             return pos0;
+    }
+    
+    private ArrayList<Direction> possibleMoves(){
+
+        ArrayList<Direction> moves = new ArrayList<Direction>();
+    
+        if(pos0[1] > 0) moves.add(Direction.UP);
+        if(pos0[1] < 3) moves.add(Direction.DOWN);
+        if(pos0[0] > 0) moves.add(Direction.LEFT);
+        if(pos0[0] < 3) moves.add(Direction.RIGHT);
+        
+        for(int i = 0; i < moves.size(); i++){
+            System.out.println(moves.get(i));
+            
+        }
+        
+        return moves;
+    }
+    
+    
+    private void MakeMove(Direction d){
+        // pos0[0]: X COORDINATOR  ;   pos0[1]: Y COORDINATOR
+        int temp = 0;
+    
+        switch(d){
+            case UP:
+                temp = configInicial[pos0[0] - 1][pos0[1]];
+                configInicial[pos0[0] - 1][pos0[1]] = pos0[0];
+                configInicial[pos0[0]][pos0[1]] = temp;
+                print2DD(configInicial);
+            case DOWN:
+                temp = configInicial[pos0[0] + 1][pos0[1]];
+                configInicial[pos0[0] + 1][pos0[1]] = pos0[0];
+                configInicial[pos0[0]][pos0[1]] = temp;
+                print2DD(configInicial);
+            case LEFT:
+                temp = configInicial[pos0[0]][pos0[1] - 1];
+                configInicial[pos0[0]][pos0[1] - 1] = pos0[0];
+                configInicial[pos0[0]][pos0[1]] = temp;
+                print2DD(configInicial);
+            case RIGHT:
+                temp = configInicial[pos0[0]][pos0[1] + 1];
+                configInicial[pos0[0]][pos0[1] + 1] = pos0[0];
+                configInicial[pos0[0]][pos0[1]] = temp;
+                print2DD(configInicial);
+            }
     }
 
 
-    //-------------------------------------------------//
-    // Nodes                                           //
+    // APOIO POR ENQUANTO PARA MAKEMOVE
+
+    public void print2DD(int config[][])
+    {
+        // Loop through all rows
+        for (int[] row : config)
+ 
+            // converting each row as string
+            // and then printing in a separate line
+            System.out.println(Arrays.toString(row));
+    }
+    
+}
+
+
+
+
+    
+
+
+//-------------------------------------------------//
+// Nodes                                           //
     //-------------------------------------------------//
 
     /*
@@ -81,43 +145,6 @@ public class work {
     // OPERADORES                                      //
     //-------------------------------------------------//
 
-    private static LinkedList<Direction> possibleMoves(int pos0[]){
-
-        LinkedList<Direction> moves = new LinkedList<Direction>();
-
-        if(pos0[1] > 0) moves.add(Direction.UP);
-        if(pos0[1] < 3) moves.add(Direction.DOWN);
-        if(pos0[0] > 0) moves.add(Direction.LEFT);
-        if(pos0[0] < 3) moves.add(Direction.RIGHT);
-
-        return moves;
-    }
-
-
-    void MakeMove(Direction d, int [][]configMatrix, int []pos0){
-        // pos0[0]: X COORDINATOR  ;   pos0[1]: Y COORDINATOR
-        int temp = 0;
-
-        switch(d){
-            case UP:
-                configMatrix[pos0[0] - 1][pos0[1]] = temp;
-                configMatrix[pos0[0] - 1][pos0[1]] = pos0[0];
-                configMatrix[pos0[0]][pos0[1]] = temp;
-            case DOWN:
-                configMatrix[pos0[0] + 1][pos0[1]] = temp;
-                configMatrix[pos0[0] + 1][pos0[1]] = pos0[0];
-                configMatrix[pos0[0]][pos0[1]] = temp;
-            case LEFT:
-                configMatrix[pos0[0]][pos0[1] - 1] = temp;
-                configMatrix[pos0[0]][pos0[1] - 1] = pos0[0];
-                configMatrix[pos0[0]][pos0[1]] = temp;
-            case RIGHT:
-                configMatrix[pos0[0]][pos0[1] + 1] = temp;
-                configMatrix[pos0[0]][pos0[1] + 1] = pos0[0];
-                configMatrix[pos0[0]][pos0[1]] = temp;
-    
-            }
-    }
 
 
 
@@ -261,13 +288,13 @@ public class work {
     //PRINT SUPPORT//
     //-------------------------------------------------//
 
-    public static void print1D(int mat[]){
+    public void print1D(int mat[]){
         for(int i=0; i < mat.length; i++){
             System.out.println(i);
         }
     }
 
-     public static void print2D(int mat[][])
+     public void print2D(int mat[][])
     {
         // Loop through all rows
         for (int[] row : mat)
@@ -312,11 +339,21 @@ public class work {
         System.out.println("-------------------");
         //print2D(finalConfig);
 
+        Game jogo = new Game(initialConfig);
 
         System.out.println("-------------------");
-        thereIsNoSolution(initialConfig,finalConfig);
+        //thereIsNoSolution(initialConfig,finalConfig);
 
-        findPos0(initialConfig);
+        System.out.println("------TABULEIRO ATUAL------------");
+        jogo.print2DD(initialConfig);
+        System.out.println("-------------------");
+        System.out.println("-------MOVIMENTOS POSSIVEIS---------");
+        jogo.possibleMoves();
+        System.out.println("-------------------");
+        System.out.println("-------TABULEIRO APOS MOVIMENTO-----------");
+        jogo.MakeMove(Direction.RIGHT);
+
+
         
     }
 
