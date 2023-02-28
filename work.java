@@ -18,6 +18,11 @@ public class work {
 
     }
 
+
+    //-------------------------------------------------//
+    // Suporte class                                   //
+    //-------------------------------------------------//
+
     private static boolean solved(int [][]configMatrix, int [][]finalMatrix){
 
         for(int i = 0; i < 4; i++){
@@ -44,15 +49,37 @@ public class work {
                     pos0[0] = j;
                     pos0[1] = i;
 
+                    System.out.println(pos0[0] + "" + pos0[1]);
+                    return pos0;
+
                     }
                     
                 }
             }
 
-            System.out.println(pos0[0] + "" + pos0[1]);
-            return pos0;
+            System.out.println("Return 0: Not found!");
+            return 0;
     }
 
+
+    //-------------------------------------------------//
+    // Nodes                                           //
+    //-------------------------------------------------//
+
+
+    private static **** MakeDescendants(){
+
+
+
+
+        return ***;
+    }
+
+
+
+    //-------------------------------------------------//
+    // OPERADORES                                      //
+    //-------------------------------------------------//
 
     private static LinkedList<Direction> possibleMoves(int pos0[]){
 
@@ -93,7 +120,7 @@ public class work {
     }
 
 
-    //Algoritmo geral
+
 
     private static ArrayList<Integer> conversion2Dto1D(int [][]configMatrix){
 
@@ -196,14 +223,40 @@ public class work {
     }
 
 
-/*
-    private String GeneralSearchALgorithm(int QueueingFunction,int [][]configInicial, int [][]configFinal){
-        if (thereIsNoSolution(configInicial,configFinal)){
+    //-------------------------------------------------//
+    // General                                         //
+    //-------------------------------------------------//
+
+    private String GeneralSearchALgorithm(int [][]configInicial, int [][]configFinal){
+        if (thereIsNoSolution(configInicial,configFinal) == false){
             return "It is impossible to reach a solution";
         }
-        return "boas";
+        
+        Queue<Integer> = new Queue<Integer>;
+        while(!){
+            node = 
+            if( == configFinal){
+                return path;
+            }
+            decendantList = MakeDescendants(node);
+
+        }
     }
-*/
+
+
+    //-------------------------------------------------//
+    // Algoritmos de busca                             //
+    //-------------------------------------------------//
+
+    // dfs(){}
+
+    // bfs() {}
+
+    // greedy() {}
+
+
+
+    //-------------------------------------------------//
     //PRINT SUPPORT//
     //-------------------------------------------------//
 
@@ -227,12 +280,16 @@ public class work {
 
     public static void main(String[] args){
 
+    //-------------------------------------------------//
+    // LOAD                                            //
+    //-------------------------------------------------//
+
         Scanner sc = new Scanner(System.in);
 
         int[][] initialConfig = new int[4][4];
         int[][] finalConfig = new int[4][4];
 
-        //LOAD//
+        
         
         for(int i=0; i<4; i++){
             for(int j=0; j<4; j++){ 
@@ -246,6 +303,8 @@ public class work {
             }
         }
 
+        //-------------------------------------------------//
+        // Call Funcs                                      //
         //-------------------------------------------------//
 
         //print2D(initialConfig);
