@@ -343,7 +343,7 @@ public class work {
 
         System.out.println("-------------------");
         //thereIsNoSolution(initialConfig,finalConfig);
-
+        if(thereIsNoSolution(initialConfig, finalConfig)){
         System.out.println("------TABULEIRO ATUAL------------");
         jogo.print2DD(initialConfig);
         System.out.println("-------------------");
@@ -352,6 +352,7 @@ public class work {
         System.out.println("-------------------");
         System.out.println("-------TABULEIRO APOS MOVIMENTO-----------");
         jogo.MakeMove(Direction.RIGHT);
+        }
 
 
         
