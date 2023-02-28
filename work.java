@@ -58,7 +58,7 @@ public class work {
             }
 
             System.out.println("Return 0: Not found!");
-            return 0;
+            return pos0;
     }
 
 
@@ -66,7 +66,7 @@ public class work {
     // Nodes                                           //
     //-------------------------------------------------//
 
-
+    /*
     private static **** MakeDescendants(){
 
 
@@ -74,7 +74,7 @@ public class work {
 
         return ***;
     }
-
+    */
 
 
     //-------------------------------------------------//
