@@ -117,54 +117,9 @@ public class work {
             // and then printing in a separate line
             System.out.println(Arrays.toString(row));
     }
-    
-}
 
 
-
-
-    
-
-
-//-------------------------------------------------//
-// Nodes                                           //
-    //-------------------------------------------------//
-
-    /*
-    private static **** MakeDescendants(){
-
-
-
-
-        return ***;
-    }
-    */
-
-
-    //-------------------------------------------------//
-    // OPERADORES                                      //
-    //-------------------------------------------------//
-
-
-
-
-
-    private static ArrayList<Integer> conversion2Dto1D(int [][]configMatrix){
-
-        ArrayList<Integer> matrixTemp = new ArrayList<Integer>(16);
-        
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                matrixTemp.add(configMatrix[i][j]);
-            }
-        }
-        
-        
-        return matrixTemp;
-        
-    }
-
-    //-------------------------------------------------//
+     //-------------------------------------------------//
     // VERIFICAR SE É POSSIVEL CHEGAR Á CONFIG FINAL   //
     //-------------------------------------------------//
 
@@ -248,6 +203,54 @@ public class work {
         }
 
     }
+    
+}
+
+
+
+
+    
+
+
+//-------------------------------------------------//
+// Nodes                                           //
+    //-------------------------------------------------//
+
+    /*
+    private static **** MakeDescendants(){
+
+
+
+
+        return ***;
+    }
+    */
+
+
+    //-------------------------------------------------//
+    // OPERADORES                                      //
+    //-------------------------------------------------//
+
+
+
+
+
+    private static ArrayList<Integer> conversion2Dto1D(int [][]configMatrix){
+
+        ArrayList<Integer> matrixTemp = new ArrayList<Integer>(16);
+        
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                matrixTemp.add(configMatrix[i][j]);
+            }
+        }
+        
+        
+        return matrixTemp;
+        
+    }
+
+   
 
 
     //-------------------------------------------------//
@@ -343,7 +346,7 @@ public class work {
 
         System.out.println("-------------------");
         //thereIsNoSolution(initialConfig,finalConfig);
-        if(thereIsNoSolution(initialConfig, finalConfig)){
+        if(jogo.thereIsNoSolution(initialConfig, finalConfig)){
         System.out.println("------TABULEIRO ATUAL------------");
         jogo.print2DD(initialConfig);
         System.out.println("-------------------");
