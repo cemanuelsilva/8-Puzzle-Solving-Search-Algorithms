@@ -119,6 +119,44 @@ public class work {
     }
 
 
+    
+}
+
+
+    //-------------------------------------------------//
+    // General                                         //
+    //-------------------------------------------------//
+
+    /*
+    private String GeneralSearchALgorithm(int [][]configInicial, int [][]configFinal){
+        if (thereIsNoSolution(configInicial,configFinal) == false){
+            return "It is impossible to reach a solution";
+        }
+        
+        Queue<Integer> = new Queue<Integer>;
+        while(!){
+            node = 
+            if( == configFinal){
+                return path;
+            }
+            decendantList = MakeDescendants(node);
+
+        }
+    }
+    */
+
+    //-------------------------------------------------//
+    // Algoritmos de busca                             //
+    //-------------------------------------------------//
+
+    // dfs(){}
+
+    // bfs() {}
+
+    // greedy() {}
+
+
+
      //-------------------------------------------------//
     // VERIFICAR SE É POSSIVEL CHEGAR Á CONFIG FINAL   //
     //-------------------------------------------------//
@@ -203,92 +241,8 @@ public class work {
         }
 
     }
-    
-}
-
-
-
-
-    
-
-
-//-------------------------------------------------//
-// Nodes                                           //
     //-------------------------------------------------//
-
-    /*
-    private static **** MakeDescendants(){
-
-
-
-
-        return ***;
-    }
-    */
-
-
-    //-------------------------------------------------//
-    // OPERADORES                                      //
-    //-------------------------------------------------//
-
-
-
-
-
-    private static ArrayList<Integer> conversion2Dto1D(int [][]configMatrix){
-
-        ArrayList<Integer> matrixTemp = new ArrayList<Integer>(16);
-        
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                matrixTemp.add(configMatrix[i][j]);
-            }
-        }
-        
-        
-        return matrixTemp;
-        
-    }
-
-   
-
-
-    //-------------------------------------------------//
-    // General                                         //
-    //-------------------------------------------------//
-
-    /*
-    private String GeneralSearchALgorithm(int [][]configInicial, int [][]configFinal){
-        if (thereIsNoSolution(configInicial,configFinal) == false){
-            return "It is impossible to reach a solution";
-        }
-        
-        Queue<Integer> = new Queue<Integer>;
-        while(!){
-            node = 
-            if( == configFinal){
-                return path;
-            }
-            decendantList = MakeDescendants(node);
-
-        }
-    }
-    */
-
-    //-------------------------------------------------//
-    // Algoritmos de busca                             //
-    //-------------------------------------------------//
-
-    // dfs(){}
-
-    // bfs() {}
-
-    // greedy() {}
-
-
-
-    //-------------------------------------------------//
-    //PRINT SUPPORT//
+    //PRINT SUPPORT/ Conversões /
     //-------------------------------------------------//
 
     public void print1D(int mat[]){
@@ -305,6 +259,22 @@ public class work {
             // converting each row as string
             // and then printing in a separate line
             System.out.println(Arrays.toString(row));
+    }
+    
+    
+    private static ArrayList<Integer> conversion2Dto1D(int [][]configMatrix){
+
+        ArrayList<Integer> matrixTemp = new ArrayList<Integer>(16);
+        
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                matrixTemp.add(configMatrix[i][j]);
+            }
+        }
+        
+        
+        return matrixTemp;
+        
     }
 
     //-------------------------------------------------//
@@ -346,7 +316,7 @@ public class work {
 
         System.out.println("-------------------");
         //thereIsNoSolution(initialConfig,finalConfig);
-        if(jogo.thereIsNoSolution(initialConfig, finalConfig)){
+        if(thereIsNoSolution(initialConfig, finalConfig)){
         System.out.println("------TABULEIRO ATUAL------------");
         jogo.print2DD(initialConfig);
         System.out.println("-------------------");
