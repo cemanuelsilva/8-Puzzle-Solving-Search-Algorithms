@@ -56,7 +56,7 @@ public class work {
             }
             
             //System.out.println("Return 0: Not found!");
-            return pos0;
+            return null;
     }
     
     private ArrayList<Direction> possibleMoves(){
@@ -78,30 +78,36 @@ public class work {
     
     
     private void MakeMove(Direction d){
-        // pos0[0]: X COORDINATOR  ;   pos0[1]: Y COORDINATOR
+        // pos0[0]: Y COORDINATOR  ;   pos0[1]: X COORDINATOR
         int temp = 0;
-    
+
+        //System.out.println("Pos[0]: " + pos0[0] + " " + "Pos[1]: " + pos0[1]);
+
         switch(d){
             case UP:
-                temp = configInicial[pos0[0] - 1][pos0[1]];
-                configInicial[pos0[0] - 1][pos0[1]] = pos0[0];
-                configInicial[pos0[0]][pos0[1]] = temp;
+                temp = configInicial[pos0[1] - 1][pos0[0]];
+                configInicial[pos0[1] - 1][pos0[0]] = 0;
+                configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                break;
             case DOWN:
-                temp = configInicial[pos0[0] + 1][pos0[1]];
-                configInicial[pos0[0] + 1][pos0[1]] = pos0[0];
-                configInicial[pos0[0]][pos0[1]] = temp;
+                temp = configInicial[pos0[0] + 1][pos0[0]];
+                configInicial[pos0[1] + 1][pos0[0]] = 0;
+                configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                break;
             case LEFT:
-                temp = configInicial[pos0[0]][pos0[1] - 1];
-                configInicial[pos0[0]][pos0[1] - 1] = pos0[0];
-                configInicial[pos0[0]][pos0[1]] = temp;
+                temp = configInicial[pos0[1]][pos0[0] - 1];
+                configInicial[pos0[1]][pos0[0] - 1] = 0;
+                configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                break;
             case RIGHT:
-                temp = configInicial[pos0[0]][pos0[1] + 1];
-                configInicial[pos0[0]][pos0[1] + 1] = pos0[0];
-                configInicial[pos0[0]][pos0[1]] = temp;
+                temp = configInicial[pos0[1]][pos0[0] + 1];
+                configInicial[pos0[1]][pos0[0] + 1] = 0;
+                configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                break;
             }
     }
 
@@ -119,14 +125,101 @@ public class work {
     }
 
 
-    
 }
 
+     //-------------------------------------------------//
+    // VERIFICAR SE É POSSIVEL CHEGAR Á CONFIG FINAL   //
+    //-------------------------------------------------//
 
+    
+    
+    private static boolean verifyParidade(ArrayList<Integer> configMatrix, int [][]configMatrix2){
+    
+        int somaParidades = 0;
+        int somaTemp = 0;
+        boolean flagSomaParidade = false;
+        boolean flagBlankRow = false;
+    
+        for(int i = 0; i < configMatrix.size(); i++){
+            //System.out.println("ENTROU CICLO I");
+            for(int j = i+1; j < configMatrix.size(); j++){
+                //System.out.println(matrixTemp.get(j));
+                //System.out.println(matrixTemp.get(i));
+                if(configMatrix.get(i) > configMatrix.get(j)){
+                    somaTemp++;
+                    //System.out.println("ENTROU");
+                }
+            }
+            somaParidades += somaTemp;
+            somaTemp = 0;
+    
+            //System.out.println(somaParidades);
+        }
+    
+        if(somaParidades % 2 == 0){
+            flagSomaParidade = true;
+        }
+    
+    
+        
+    
+        for(int i = 0; i > 4; i++){
+            
+            for(int j = 0; j > 4; j++){
+                
+                if(configMatrix2[i][j] == 0){
+                    if(i % 2 == 0){
+                        flagBlankRow = true;
+                    }
+                    
+                }
+            }
+            
+    
+            //System.out.println(somaParidades);
+        }
+    
+    
+        if(flagSomaParidade == true &&  flagBlankRow == false){
+            return true;
+        }
+        else{
+            return false;
+        }
+    
+    }
+    
+    
+    private static boolean thereIsNoSolution(int [][]configInicial, int [][]configFinal){
+        
+        ArrayList<Integer> configuracaoInicial = new ArrayList<Integer>(16);
+        ArrayList<Integer> configuracaoFinal = new ArrayList<Integer>(16);
+        boolean result_configInicial = false;
+        boolean result_configFinal = false;
+    
+        configuracaoInicial = conversion2Dto1D(configInicial);
+        configuracaoFinal = conversion2Dto1D(configFinal);
+    
+        result_configInicial = verifyParidade(configuracaoInicial, configInicial);
+        result_configFinal = verifyParidade(configuracaoFinal, configFinal);
+    
+        if(result_configInicial == result_configFinal){
+            System.out.println("EXISTE SOLUÇÃO!");
+            return true;
+        }
+        else{
+            System.out.println("NÃO É POSSIVEL CHEGAR A UMA CONFIGURAÇÃO FINAL!");
+            return false;
+        }
+    
+    }
+    
+    
+    
     //-------------------------------------------------//
     // General                                         //
     //-------------------------------------------------//
-
+    
     /*
     private String GeneralSearchALgorithm(int [][]configInicial, int [][]configFinal){
         if (thereIsNoSolution(configInicial,configFinal) == false){
@@ -157,92 +250,8 @@ public class work {
 
 
 
-     //-------------------------------------------------//
-    // VERIFICAR SE É POSSIVEL CHEGAR Á CONFIG FINAL   //
     //-------------------------------------------------//
-
-    private static boolean verifyParidade(ArrayList<Integer> configMatrix, int [][]configMatrix2){
-
-        int somaParidades = 0;
-        int somaTemp = 0;
-        boolean flagSomaParidade = false;
-        boolean flagBlankRow = false;
-
-        for(int i = 0; i < configMatrix.size(); i++){
-            //System.out.println("ENTROU CICLO I");
-            for(int j = i+1; j < configMatrix.size(); j++){
-                //System.out.println(matrixTemp.get(j));
-                //System.out.println(matrixTemp.get(i));
-                if(configMatrix.get(i) > configMatrix.get(j)){
-                    somaTemp++;
-                    //System.out.println("ENTROU");
-                }
-            }
-            somaParidades += somaTemp;
-            somaTemp = 0;
-
-            //System.out.println(somaParidades);
-        }
-
-        if(somaParidades % 2 == 0){
-            flagSomaParidade = true;
-        }
-
-
-        
-
-        for(int i = 0; i < 4; i++){
-            
-            for(int j = 0; j < 4; j++){
-                
-                if(configMatrix2[i][j] == 0){
-                    if(i % 2 == 0){
-                        flagBlankRow = false;
-                    }
-                    
-                }
-            }
-            
-
-            //System.out.println(somaParidades);
-        }
-
-
-        if(flagSomaParidade == flagBlankRow){
-            return true;
-        }
-        else{
-            return false;
-        }
-
-    }
-
-
-    private static boolean thereIsNoSolution(int [][]configInicial, int [][]configFinal){
-        
-        ArrayList<Integer> configuracaoInicial = new ArrayList<Integer>(16);
-        ArrayList<Integer> configuracaoFinal = new ArrayList<Integer>(16);
-        boolean result_configInicial = false;
-        boolean result_configFinal = false;
-
-        configuracaoInicial = conversion2Dto1D(configInicial);
-        configuracaoFinal = conversion2Dto1D(configFinal);
-
-        result_configInicial = verifyParidade(configuracaoInicial, configInicial);
-        result_configFinal = verifyParidade(configuracaoFinal, configFinal);
-
-        if(result_configInicial == result_configFinal){
-            System.out.println("EXISTE SOLUÇÃO!");
-            return true;
-        }
-        else{
-            System.out.println("NÃO É POSSIVEL CHEGAR A UMA CONFIGURAÇÃO FINAL!");
-            return false;
-        }
-
-    }
-    //-------------------------------------------------//
-    //PRINT SUPPORT/ Conversões /
+    //PRINT SUPPORT//
     //-------------------------------------------------//
 
     public void print1D(int mat[]){
@@ -250,8 +259,8 @@ public class work {
             System.out.println(i);
         }
     }
-
-     public void print2D(int mat[][])
+    
+    public void print2D(int mat[][])
     {
         // Loop through all rows
         for (int[] row : mat)
@@ -260,7 +269,6 @@ public class work {
             // and then printing in a separate line
             System.out.println(Arrays.toString(row));
     }
-    
     
     private static ArrayList<Integer> conversion2Dto1D(int [][]configMatrix){
 
@@ -278,7 +286,7 @@ public class work {
     }
 
     //-------------------------------------------------//
-
+    
     public static void main(String[] args){
 
     //-------------------------------------------------//
@@ -315,7 +323,7 @@ public class work {
         Game jogo = new Game(initialConfig);
 
         System.out.println("-------------------");
-        //thereIsNoSolution(initialConfig,finalConfig);
+        
         if(thereIsNoSolution(initialConfig, finalConfig)){
         System.out.println("------TABULEIRO ATUAL------------");
         jogo.print2DD(initialConfig);
@@ -324,7 +332,7 @@ public class work {
         jogo.possibleMoves();
         System.out.println("-------------------");
         System.out.println("-------TABULEIRO APOS MOVIMENTO-----------");
-        jogo.MakeMove(Direction.RIGHT);
+        jogo.MakeMove(Direction.DOWN);
         }
 
 
