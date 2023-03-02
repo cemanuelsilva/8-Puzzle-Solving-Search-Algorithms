@@ -91,7 +91,7 @@ public class work {
                 print2DD(configInicial);
                 break;
             case DOWN:
-                temp = configInicial[pos0[0] + 1][pos0[0]];
+                temp = configInicial[pos0[1] + 1][pos0[0]];
                 configInicial[pos0[1] + 1][pos0[0]] = 0;
                 configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
