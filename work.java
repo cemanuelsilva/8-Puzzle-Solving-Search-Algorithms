@@ -7,6 +7,7 @@ public class work {
 
    static class Game{
 
+    Game pai;
     int[] pos0 = new int[2];
     int configInicial[][];
     
@@ -16,9 +17,21 @@ public class work {
         pos0 = findPos0();
     }
     
+    
     //-------------------------------------------------//
     // Suporte class                                   //
     //-------------------------------------------------//
+
+    LinkedList<Game> MakeDescendants() {
+        Vector<Direction> moves = possibleMoves();
+        LinkedList<Game> descendents = new LinkedList<Game>();
+        for(Direction d : moves) {
+            Game descendent = new Game(configInicial);
+            descendent.MakeMove(d);
+            descendents.add(descendent);
+        }
+        return descendents;
+    }
 
     private boolean solved(int [][]finalMatrix){
 
@@ -30,7 +43,7 @@ public class work {
                 }
             }
         }
-        //System.out.println("Sim");
+        System.out.println("Resolvido");
         return true;
     }
     
@@ -59,19 +72,21 @@ public class work {
             return null;
     }
     
-    private ArrayList<Direction> possibleMoves(){
+    private Vector<Direction> possibleMoves(){
 
-        ArrayList<Direction> moves = new ArrayList<Direction>();
+        Vector<Direction> moves = new Vector<Direction>();
     
         if(pos0[1] > 0) moves.add(Direction.UP);
         if(pos0[1] < 3) moves.add(Direction.DOWN);
         if(pos0[0] > 0) moves.add(Direction.LEFT);
         if(pos0[0] < 3) moves.add(Direction.RIGHT);
         
+        /* 
         for(int i = 0; i < moves.size(); i++){
             System.out.println(moves.get(i));
             
         }
+        */
         
         return moves;
     }
@@ -89,24 +104,28 @@ public class work {
                 configInicial[pos0[1] - 1][pos0[0]] = 0;
                 configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                System.out.println("-------------------");
                 break;
             case DOWN:
                 temp = configInicial[pos0[1] + 1][pos0[0]];
                 configInicial[pos0[1] + 1][pos0[0]] = 0;
                 configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                System.out.println("-------------------");
                 break;
             case LEFT:
                 temp = configInicial[pos0[1]][pos0[0] - 1];
                 configInicial[pos0[1]][pos0[0] - 1] = 0;
                 configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                System.out.println("-------------------");
                 break;
             case RIGHT:
                 temp = configInicial[pos0[1]][pos0[0] + 1];
                 configInicial[pos0[1]][pos0[0] + 1] = 0;
                 configInicial[pos0[1]][pos0[0]] = temp;
                 print2DD(configInicial);
+                System.out.println("-------------------");
                 break;
             }
     }
@@ -242,7 +261,70 @@ public class work {
     // Algoritmos de busca                             //
     //-------------------------------------------------//
 
-    // dfs(){}
+    public static int dfs(int [][] configInicial, int[][] configFinal){
+
+        long start = System.currentTimeMillis();
+
+        Game tabuleiro = new Game(configInicial);
+
+        Stack<Game> pilha = new Stack<Game>();
+        pilha.push(tabuleiro);
+
+        while(!pilha.isEmpty()){
+            Game node = pilha.pop();
+
+            if(node.solved(configFinal)){
+                return 0;
+            }
+
+    
+            LinkedList<Game> descendents = node.MakeDescendants();
+                for(Game desc : descendents) {
+                    pilha.push(desc);
+                }
+            
+            
+            /* 
+            for(int i = 0; i < descendentes.size(); i++){
+                System.out.println(descendentes.get(i))
+                pilha.push(descendentes.get(i));
+            }
+            */
+            
+
+
+        }
+        
+        long end = System.currentTimeMillis();
+        long time = end - start;
+        System.out.println("time: " + time);
+
+        
+        return 1;
+
+    }
+
+
+    public static string bfs(int [][] configInicial, int[][] configFinal){
+
+        Game tabuleiro = new Game(configInicial);
+
+            Queue<Game> q = new LinkedList<Game>();
+            q.add(tabuleiro);
+            while(!q.isEmpty()) {
+                Game node = q.remove();
+                if(node.solved(configFinal)) {
+                    return "sim";
+                }
+
+                LinkedList<Game> descendents = node.MakeDescendants();
+                for(Game desc : descendents) {
+                    desc.pai = node;
+                    q.add(desc);
+                }
+            }
+            return "nao";
+    }
 
     // bfs() {}
 
@@ -320,11 +402,15 @@ public class work {
         System.out.println("-------------------");
         //print2D(finalConfig);
 
-        Game jogo = new Game(initialConfig);
 
         System.out.println("-------------------");
         
-        if(thereIsNoSolution(initialConfig, finalConfig)){
+        //if(thereIsNoSolution(initialConfig, finalConfig)){
+
+            bfs(initialConfig, finalConfig);
+
+
+        /* 
         System.out.println("------TABULEIRO ATUAL------------");
         jogo.print2DD(initialConfig);
         System.out.println("-------------------");
@@ -333,7 +419,8 @@ public class work {
         System.out.println("-------------------");
         System.out.println("-------TABULEIRO APOS MOVIMENTO-----------");
         jogo.MakeMove(Direction.DOWN);
-        }
+        */
+        //}
 
 
         
