@@ -7,13 +7,17 @@ enum Direction {  LEFT, UP, RIGHT, DOWN }
 
 public class work {
 
-   static class Game{
+   static class Game implements Comparable<Game>{
+
+    //-------------------------------------------------//
+    // CLASS && CONSTRUCTOR                            //
+    //-------------------------------------------------//
 
     static int[][] finalConfig;
     Game pai;
     int[] pos0 = new int[2];
     int configInicial[][];
-    int depth = 0;
+    int depth;
     Direction lastDirection;
     int heuristics;
     Heuristic heuristica;
@@ -28,12 +32,15 @@ public class work {
             }
         }
 
+        this.heuristica = heuristica;
+        HeuristicValue();
         pos0 = findPos0();
+        depth = 0;
     }
     
     
     //-------------------------------------------------//
-    // Suporte class                                   //
+    // METHODS CLASS                                   //
     //-------------------------------------------------//
 
     
@@ -86,8 +93,8 @@ public class work {
             return null;
     }
     
-    void HeuristicValue(Heuristic h) {
-        switch(h) {
+    void HeuristicValue() {
+        switch(heuristica) {
             case BADNUM:
             heuristics = BadNumHeuristic();
             break;
@@ -260,6 +267,19 @@ public class work {
         return path;
     }
 
+        @Override
+        public int compareTo(Game game) {
+            int thisF = this.heuristics + this.depth;
+            int gameF = game.heuristics + game.depth;
+            if(thisF > gameF) {
+                return 1;
+            } else if (thisF < gameF) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+
 
     public void print2DD()
     {
@@ -274,9 +294,9 @@ public class work {
 
 }
 
-     //-------------------------------------------------//
-    // VERIFICAR SE É POSSIVEL CHEGAR Á CONFIG FINAL   //
-    //-------------------------------------------------//
+     //-------------------------------------------------------//
+    // VERIFY IF ITS POSSIBLE TO ARRIVE FINAL CONFIGURATION   //
+    //--------------------------------------------------------//
 
     
     
@@ -386,7 +406,7 @@ public class work {
     */
 
     //-------------------------------------------------//
-    // Algoritmos de busca                             //
+    // SEARCH ALGORITHMS                               //
     //-------------------------------------------------//
 
     static Stack<Direction> dfs(int[][] initialConfig, Heuristic heuristica){
@@ -479,9 +499,59 @@ public class work {
     }
 
 
+    private static void Gulosa(int[][] initialConfig, Heuristic heuristica) {
+        Game g = new Game(initialConfig, heuristica);
+        System.out.println("Greedy:");
+
+        LinkedList<Direction> path = new LinkedList<Direction>();
+        PriorityQueue<Game> pq = new PriorityQueue<Game>();
+        pq.add(g);
+        while(!pq.isEmpty()) {
+            Game node = pq.poll();
+            // node.PrintBoard();
+            if(node.solved()) {
+                PrintPath(node);
+                return;
+            }
+            pq.add(node.GreedyDescendent());
+            if(node.lastDirection != null) path.add(node.lastDirection);
+        }
+        
+        return;
+    }
+
+
+    private static void A_Star(int[][] initialConfig, Heuristic heuristic) {
+        Game g = new Game(initialConfig, heuristic);
+
+        System.out.println("A*:");
+
+        PriorityQueue<Game> pq = new PriorityQueue<Game>();
+        pq.add(g);
+        while(!pq.isEmpty()) {
+            Game node = pq.poll();
+            if(node.solved()) {
+                PrintPath(node);
+                return;
+            }
+            LinkedList<Game> descendents = node.MakeDescendants();
+            for(Game desc : descendents) {
+                desc.pai = node;
+                desc.depth = node.depth + 1;
+                pq.add(desc);
+            }
+        }
+
+        
+        return;
+    }
+
+
+
 
     public static void PrintPath(Game node) {
         LinkedList<Direction> path = node.GetPath();
+        System.out.println(" Heuristic: " + node.heuristica);
         System.out.println(" Number of moves: " + path.size());
         System.out.println(" Path: " + path);
         System.out.println();
@@ -491,7 +561,7 @@ public class work {
 
 
     //-------------------------------------------------//
-    //PRINT SUPPORT//
+    //PRINT SUPPORT                                    //
     //-------------------------------------------------//
 
     public void print1D(int mat[]){
@@ -553,25 +623,25 @@ public class work {
         }
 
         //-------------------------------------------------//
-        // Call Funcs                                      //
+        // FUNCS CALL                                      //
         //-------------------------------------------------//
 
 
         System.out.println("-------------------");
         
-        /* 
+         
         if(thereIsNoSolution(initialConfig, finalConfig)){
 
-            bfs_iterativa(initialConfig, finalConfig);
+            Game.finalConfig(finalConfig);
+            A_Star(initialConfig, Heuristic.BADNUM);
+            //bfs(initialConfig, Heuristic.NONE);
+            //dfs(initialConfig, Heuristic.NONE);
+            //greedy(initialConfig, Heuristic.MANDIST);
+            //dfs_limited(initialConfig, Heuristic.NONE);
 
         }
-        */
+        
 
-        Game tabu = new Game(initialConfig, Heuristic.NONE);
-        tabu.finalConfig(finalConfig);
-
-        //tabu.ManDistHeuristic();
-        //bfs(initialConfig, Heuristic.NONE);
 
 
         
