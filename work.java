@@ -10,9 +10,19 @@ public class work {
     Game pai;
     int[] pos0 = new int[2];
     int configInicial[][];
+    int depth = 0;
+    Direction lastDirection;
+    int heuristic;
     
-    Game(int [][]configInicial){
-        this.configInicial = configInicial;
+    Game(int [][]initialConfig){
+
+        configInicial = new int[4][4];
+        
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                configInicial[i][j] = initialConfig[i][j];
+            }
+        }
 
         pos0 = findPos0();
     }
@@ -22,17 +32,7 @@ public class work {
     // Suporte class                                   //
     //-------------------------------------------------//
 
-    LinkedList<Game> MakeDescendants() {
-        Vector<Direction> moves = possibleMoves();
-        LinkedList<Game> descendents = new LinkedList<Game>();
-        for(Direction d : moves) {
-            Game descendent = new Game(configInicial);
-            descendent.MakeMove(d);
-            descendents.add(descendent);
-        }
-        return descendents;
-    }
-
+    
     private boolean solved(int [][]finalMatrix){
 
         for(int i = 0; i < 4; i++){
@@ -72,14 +72,92 @@ public class work {
             return null;
     }
     
-    private Vector<Direction> possibleMoves(){
+    
+    
+    void MakeMove(Direction d){
+        // pos0[0]: Y COORDINATOR  ;   pos0[1]: X COORDINATOR
+        
+        int swapIndex_x = -1;
+        int swapIndex_y = -1;
+
+        //System.out.println("Pos[0]: " + pos0[0] + " " + "Pos[1]: " + pos0[1]);
+
+        switch(d){
+            case UP:
+                
+                swapIndex_x = pos0[1] + 1;
+                swapIndex_y =  pos0[0];
+                
+                break;
+            case DOWN:
+              
+                swapIndex_x = pos0[1] - 1;
+                swapIndex_y =  pos0[0];
+                
+                break;
+            case LEFT:
+               
+                swapIndex_x = pos0[1];
+                swapIndex_y =  pos0[0] + 1;
+                
+                break;
+            case RIGHT:
+                
+
+                swapIndex_x = pos0[1];
+                swapIndex_y =  pos0[0] - 1; 
+              
+                break;
+
+                default:
+            }
+
+            lastDirection = d;
+            configInicial[pos0[1]][pos0[0]] = configInicial[swapIndex_x][swapIndex_y];
+            configInicial[swapIndex_x][swapIndex_y] = 0;
+            pos0 = findPos0();
+
+    }
+
+    LinkedList<Game> MakeDescendants() {
+        Vector<Direction> moves = possibleMoves();
+        LinkedList<Game> descendents = new LinkedList<Game>();
+        for(Direction d : moves) {
+            Game descendent = new Game(configInicial);
+            descendent.MakeMove(d);
+            //descendent.print2DD();
+            //System.out.println("---");
+            descendents.add(descendent);
+        }
+        return descendents;
+    }
+
+
+    Game GreedyDescendent() {
+        Vector<Direction> moves = possibleMoves();
+
+        Game bestDescendent = new Game(configInicial);
+        bestDescendent.MakeMove(moves.remove(0));
+
+        for(Direction d : moves) {
+            Game newDescendent = new Game(configInicial);
+            newDescendent.MakeMove(d);
+            if(newDescendent.heuristic <= bestDescendent.heuristic) {
+                bestDescendent = newDescendent;
+            }
+        }
+        return bestDescendent;
+    }
+
+
+    Vector<Direction> possibleMoves(){
 
         Vector<Direction> moves = new Vector<Direction>();
     
-        if(pos0[1] > 0) moves.add(Direction.UP);
-        if(pos0[1] < 3) moves.add(Direction.DOWN);
-        if(pos0[0] > 0) moves.add(Direction.LEFT);
-        if(pos0[0] < 3) moves.add(Direction.RIGHT);
+        if(pos0[0] < 3) moves.add(Direction.LEFT);
+        if(pos0[1] < 3) moves.add(Direction.UP);
+        if(pos0[0] > 0) moves.add(Direction.RIGHT);
+        if(pos0[1] > 0) moves.add(Direction.DOWN);
         
         /* 
         for(int i = 0; i < moves.size(); i++){
@@ -90,53 +168,22 @@ public class work {
         
         return moves;
     }
-    
-    
-    private void MakeMove(Direction d){
-        // pos0[0]: Y COORDINATOR  ;   pos0[1]: X COORDINATOR
-        int temp = 0;
 
-        //System.out.println("Pos[0]: " + pos0[0] + " " + "Pos[1]: " + pos0[1]);
-
-        switch(d){
-            case UP:
-                temp = configInicial[pos0[1] - 1][pos0[0]];
-                configInicial[pos0[1] - 1][pos0[0]] = 0;
-                configInicial[pos0[1]][pos0[0]] = temp;
-                print2DD(configInicial);
-                System.out.println("-------------------");
-                break;
-            case DOWN:
-                temp = configInicial[pos0[1] + 1][pos0[0]];
-                configInicial[pos0[1] + 1][pos0[0]] = 0;
-                configInicial[pos0[1]][pos0[0]] = temp;
-                print2DD(configInicial);
-                System.out.println("-------------------");
-                break;
-            case LEFT:
-                temp = configInicial[pos0[1]][pos0[0] - 1];
-                configInicial[pos0[1]][pos0[0] - 1] = 0;
-                configInicial[pos0[1]][pos0[0]] = temp;
-                print2DD(configInicial);
-                System.out.println("-------------------");
-                break;
-            case RIGHT:
-                temp = configInicial[pos0[1]][pos0[0] + 1];
-                configInicial[pos0[1]][pos0[0] + 1] = 0;
-                configInicial[pos0[1]][pos0[0]] = temp;
-                print2DD(configInicial);
-                System.out.println("-------------------");
-                break;
-            }
+    LinkedList<Direction> GetPath() {
+        LinkedList<Direction> path = new LinkedList<Direction>();
+        Game game = this;
+        while(game.pai != null) {//Tá na ordem contrária
+            path.addFirst(game.lastDirection);
+            game = game.pai;
+        }
+        return path;
     }
 
 
-    // APOIO POR ENQUANTO PARA MAKEMOVE
-
-    public void print2DD(int config[][])
+    public void print2DD()
     {
         // Loop through all rows
-        for (int[] row : config)
+        for (int[] row : configInicial)
  
             // converting each row as string
             // and then printing in a separate line
@@ -160,13 +207,13 @@ public class work {
         boolean flagBlankRow = false;
     
         for(int i = 0; i < configMatrix.size(); i++){
-            //System.out.println("ENTROU CICLO I");
+            
             for(int j = i+1; j < configMatrix.size(); j++){
                 //System.out.println(matrixTemp.get(j));
                 //System.out.println(matrixTemp.get(i));
                 if(configMatrix.get(i) > configMatrix.get(j)){
                     somaTemp++;
-                    //System.out.println("ENTROU");
+                    
                 }
             }
             somaParidades += somaTemp;
@@ -261,74 +308,104 @@ public class work {
     // Algoritmos de busca                             //
     //-------------------------------------------------//
 
-    public static int dfs(int [][] configInicial, int[][] configFinal){
+    static Stack<Direction> dfs(int[][] initialConfig, int[][] finalConfig){
 
-        long start = System.currentTimeMillis();
+        Game tabuleiro = new Game(initialConfig);
 
-        Game tabuleiro = new Game(configInicial);
-
+        
+        Stack<Direction> path = new Stack<Direction>();
         Stack<Game> pilha = new Stack<Game>();
         pilha.push(tabuleiro);
-
-        while(!pilha.isEmpty()){
+        while(!pilha.isEmpty()) {
             Game node = pilha.pop();
-
-            if(node.solved(configFinal)){
-                return 0;
+            if(node.solved(finalConfig)) {
+                PrintPath(node);
+                return path;
             }
-
-    
             LinkedList<Game> descendents = node.MakeDescendants();
-                for(Game desc : descendents) {
-                    pilha.push(desc);
-                }
-            
-            
-            /* 
-            for(int i = 0; i < descendentes.size(); i++){
-                System.out.println(descendentes.get(i))
-                pilha.push(descendentes.get(i));
+            for(Game desc : descendents) {
+                pilha.push(desc);
             }
-            */
-            
-
-
+            if(node.lastDirection != null) path.push(node.lastDirection);
         }
-        
-        long end = System.currentTimeMillis();
-        long time = end - start;
-        System.out.println("time: " + time);
-
-        
-        return 1;
+        return null;
 
     }
 
 
-    public static string bfs(int [][] configInicial, int[][] configFinal){
+    public static void bfs(int [][] configInicial, int[][] configFinal){
 
         Game tabuleiro = new Game(configInicial);
 
             Queue<Game> q = new LinkedList<Game>();
             q.add(tabuleiro);
+
             while(!q.isEmpty()) {
                 Game node = q.remove();
                 if(node.solved(configFinal)) {
-                    return "sim";
+                    PrintPath(node);
+                    return;
+                
+                    
                 }
-
-                LinkedList<Game> descendents = node.MakeDescendants();
-                for(Game desc : descendents) {
+                
+                LinkedList<Game> descendentList = node.MakeDescendants();
+                for(Game desc : descendentList) {
                     desc.pai = node;
                     q.add(desc);
+
+                    //desc.print2DD();
+                    //System.out.println("---");
+                    //System.out.println("POSSIVEIS");
+                    //desc.possibleMoves();
                 }
             }
-            return "nao";
+            
     }
 
-    // bfs() {}
+    static void bfs_iterativa(int[][] initialConfig, int[][] finalConfig){
+        int depth_lim = 14;
+        Game g = new Game(initialConfig);
 
-    // greedy() {}
+
+        
+        Stack<Direction> path = new Stack<Direction>();
+        Stack<Game> s = new Stack<Game>();
+
+        s.push(g);
+
+        while(!s.isEmpty()) {
+            Game node = s.pop();
+            // node.PrintBoard();
+            if(node.solved(finalConfig)) {
+                PrintPath(node);
+                return ;
+            }
+            if(node.depth > depth_lim) {
+                continue;
+            }
+            LinkedList<Game> descendents = node.MakeDescendants();
+            for(Game desc : descendents) {
+                desc.pai = node;
+                desc.depth = node.depth + 1;
+                s.push(desc);
+            }
+        }
+        
+        System.out.print("Não encontrado");
+        return ;
+
+    }
+
+
+
+    public static void PrintPath(Game node) {
+        LinkedList<Direction> path = node.GetPath();
+        System.out.println(" Number of moves: " + path.size());
+        System.out.println(" Path: " + path);
+        System.out.println();
+    }
+
 
 
 
@@ -398,29 +475,14 @@ public class work {
         // Call Funcs                                      //
         //-------------------------------------------------//
 
-        //print2D(initialConfig);
-        System.out.println("-------------------");
-        //print2D(finalConfig);
-
 
         System.out.println("-------------------");
         
-        //if(thereIsNoSolution(initialConfig, finalConfig)){
+        if(thereIsNoSolution(initialConfig, finalConfig)){
 
-            bfs(initialConfig, finalConfig);
+            bfs_iterativa(initialConfig, finalConfig);
 
-
-        /* 
-        System.out.println("------TABULEIRO ATUAL------------");
-        jogo.print2DD(initialConfig);
-        System.out.println("-------------------");
-        System.out.println("-------MOVIMENTOS POSSIVEIS---------");
-        jogo.possibleMoves();
-        System.out.println("-------------------");
-        System.out.println("-------TABULEIRO APOS MOVIMENTO-----------");
-        jogo.MakeMove(Direction.DOWN);
-        */
-        //}
+        }
 
 
         
