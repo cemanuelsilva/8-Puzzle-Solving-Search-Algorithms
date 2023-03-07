@@ -1,18 +1,21 @@
 import java.util.*;
 
+enum Heuristic { BADNUM, MANDIST, NONE}
 enum Direction {  LEFT, UP, RIGHT, DOWN }
+
 
 
 public class work {
 
    static class Game{
 
+    static int[][] finalConfig;
     Game pai;
     int[] pos0 = new int[2];
     int configInicial[][];
     int depth = 0;
     Direction lastDirection;
-    int heuristic;
+    int heuristics;
     
     Game(int [][]initialConfig){
 
@@ -33,11 +36,11 @@ public class work {
     //-------------------------------------------------//
 
     
-    private boolean solved(int [][]finalMatrix){
+    private boolean solved(){
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                if(configInicial[i][j] != finalMatrix[i][j]){
+                if(configInicial[i][j] != finalConfig[i][j]){
                     //System.out.println("Nop");
                     return false;
                 }
@@ -45,6 +48,16 @@ public class work {
         }
         System.out.println("Resolvido");
         return true;
+    }
+
+    private static void finalConfig(int[][] finalConfigs){
+        finalConfig = new int[4][4];
+        for(int i=0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                 finalConfig[i][j] = finalConfigs[i][j];
+            }
+        }
+
     }
     
     private int[] findPos0(){
@@ -72,7 +85,52 @@ public class work {
             return null;
     }
     
-    
+    void HeuristicValue(Heuristic h) {
+        switch(h) {
+            case BADNUM:
+            heuristics = BadNumHeuristic();
+            break;
+
+            case MANDIST:
+            heuristics = ManDistHeuristic();
+            break;
+
+            default:
+        }
+    }
+
+    int BadNumHeuristic(){
+
+        int soma = 0;
+
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                if(configInicial[i][j] != finalConfig[i][j]){
+                    soma++;
+                }
+            }
+        }
+
+        return soma;
+    }
+
+    int ManDistHeuristic(){
+
+        int soma = 0;
+        int real = 0;
+
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                if(configInicial[i][j] != finalConfig[i][j]){
+                    
+                    
+                }
+            }
+        }
+
+        System.out.println(real);
+        return real;
+    }
     
     void MakeMove(Direction d){
         // pos0[0]: Y COORDINATOR  ;   pos0[1]: X COORDINATOR
@@ -142,7 +200,7 @@ public class work {
         for(Direction d : moves) {
             Game newDescendent = new Game(configInicial);
             newDescendent.MakeMove(d);
-            if(newDescendent.heuristic <= bestDescendent.heuristic) {
+            if(newDescendent.heuristics <= bestDescendent.heuristics) {
                 bestDescendent = newDescendent;
             }
         }
@@ -308,7 +366,7 @@ public class work {
     // Algoritmos de busca                             //
     //-------------------------------------------------//
 
-    static Stack<Direction> dfs(int[][] initialConfig, int[][] finalConfig){
+    static Stack<Direction> dfs(int[][] initialConfig){
 
         Game tabuleiro = new Game(initialConfig);
 
@@ -318,7 +376,7 @@ public class work {
         pilha.push(tabuleiro);
         while(!pilha.isEmpty()) {
             Game node = pilha.pop();
-            if(node.solved(finalConfig)) {
+            if(node.solved()) {
                 PrintPath(node);
                 return path;
             }
@@ -333,7 +391,7 @@ public class work {
     }
 
 
-    public static void bfs(int [][] configInicial, int[][] configFinal){
+    public static void bfs(int [][] configInicial){
 
         Game tabuleiro = new Game(configInicial);
 
@@ -342,7 +400,7 @@ public class work {
 
             while(!q.isEmpty()) {
                 Game node = q.remove();
-                if(node.solved(configFinal)) {
+                if(node.solved()) {
                     PrintPath(node);
                     return;
                 
@@ -363,7 +421,7 @@ public class work {
             
     }
 
-    static void bfs_iterativa(int[][] initialConfig, int[][] finalConfig){
+    static void bfs_iterativa(int[][] initialConfig){
         int depth_lim = 14;
         Game g = new Game(initialConfig);
 
@@ -377,7 +435,7 @@ public class work {
         while(!s.isEmpty()) {
             Game node = s.pop();
             // node.PrintBoard();
-            if(node.solved(finalConfig)) {
+            if(node.solved()) {
                 PrintPath(node);
                 return ;
             }
@@ -478,11 +536,18 @@ public class work {
 
         System.out.println("-------------------");
         
+        /* 
         if(thereIsNoSolution(initialConfig, finalConfig)){
 
             bfs_iterativa(initialConfig, finalConfig);
 
         }
+        */
+
+        Game tabu = new Game(initialConfig);
+        tabu.finalConfig(finalConfig);
+
+        tabu.ManDistHeuristic();
 
 
         
