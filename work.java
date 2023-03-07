@@ -16,8 +16,9 @@ public class work {
     int depth = 0;
     Direction lastDirection;
     int heuristics;
+    Heuristic heuristica;
     
-    Game(int [][]initialConfig){
+    Game(int [][]initialConfig, Heuristic heuristica){
 
         configInicial = new int[4][4];
         
@@ -119,18 +120,36 @@ public class work {
         int soma = 0;
         int real = 0;
 
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                if(configInicial[i][j] != finalConfig[i][j]){
-                    
-                    
+        int i_x=0,i_y=0,f_x=0,f_y=0;
+        for(int i=1;i<16;i++){
+
+            for(int x=0;x<4;x++){
+                for(int y=0;y<4;y++){
+                    if(configInicial[x][y] == i){
+                        i_x = x;
+                        i_y = y;
+                    }
+                    if(finalConfig[x][y] == i){
+                        f_x = x;
+                        f_y = y;
+                    }
                 }
             }
-        }
 
-        System.out.println(real);
-        return real;
+            /*for(int x=0;x<4;x++){
+                for(int y=0;y<4;y++){
+                    if(finalConfig[x][y] == i){
+                        f_x = x;
+                        f_y = y;
+                    }
+                }
+            }
+            */
+        soma += (Math.abs(i_x-f_x) + Math.abs(i_y-f_y));
     }
+        
+        return soma;
+}
     
     void MakeMove(Direction d){
         // pos0[0]: Y COORDINATOR  ;   pos0[1]: X COORDINATOR
@@ -181,7 +200,7 @@ public class work {
         Vector<Direction> moves = possibleMoves();
         LinkedList<Game> descendents = new LinkedList<Game>();
         for(Direction d : moves) {
-            Game descendent = new Game(configInicial);
+            Game descendent = new Game(configInicial, heuristica);
             descendent.MakeMove(d);
             //descendent.print2DD();
             //System.out.println("---");
@@ -194,11 +213,11 @@ public class work {
     Game GreedyDescendent() {
         Vector<Direction> moves = possibleMoves();
 
-        Game bestDescendent = new Game(configInicial);
+        Game bestDescendent = new Game(configInicial, heuristica);
         bestDescendent.MakeMove(moves.remove(0));
 
         for(Direction d : moves) {
-            Game newDescendent = new Game(configInicial);
+            Game newDescendent = new Game(configInicial, heuristica);
             newDescendent.MakeMove(d);
             if(newDescendent.heuristics <= bestDescendent.heuristics) {
                 bestDescendent = newDescendent;
@@ -230,9 +249,13 @@ public class work {
     LinkedList<Direction> GetPath() {
         LinkedList<Direction> path = new LinkedList<Direction>();
         Game game = this;
+        int i = 1;
         while(game.pai != null) {//Tá na ordem contrária
             path.addFirst(game.lastDirection);
             game = game.pai;
+            System.out.println("------ Move: " + i + " ------");
+            game.print2DD();
+            i++;
         }
         return path;
     }
@@ -366,9 +389,9 @@ public class work {
     // Algoritmos de busca                             //
     //-------------------------------------------------//
 
-    static Stack<Direction> dfs(int[][] initialConfig){
+    static Stack<Direction> dfs(int[][] initialConfig, Heuristic heuristica){
 
-        Game tabuleiro = new Game(initialConfig);
+        Game tabuleiro = new Game(initialConfig, heuristica);
 
         
         Stack<Direction> path = new Stack<Direction>();
@@ -391,9 +414,9 @@ public class work {
     }
 
 
-    public static void bfs(int [][] configInicial){
+    public static void bfs(int [][] configInicial, Heuristic heuristica){
 
-        Game tabuleiro = new Game(configInicial);
+        Game tabuleiro = new Game(configInicial, heuristica);
 
             Queue<Game> q = new LinkedList<Game>();
             q.add(tabuleiro);
@@ -421,9 +444,9 @@ public class work {
             
     }
 
-    static void bfs_iterativa(int[][] initialConfig){
+    static void bfs_iterativa(int[][] initialConfig, Heuristic heuristica){
         int depth_lim = 14;
-        Game g = new Game(initialConfig);
+        Game g = new Game(initialConfig, heuristica);
 
 
         
@@ -544,10 +567,11 @@ public class work {
         }
         */
 
-        Game tabu = new Game(initialConfig);
+        Game tabu = new Game(initialConfig, Heuristic.NONE);
         tabu.finalConfig(finalConfig);
 
-        tabu.ManDistHeuristic();
+        //tabu.ManDistHeuristic();
+        //bfs(initialConfig, Heuristic.NONE);
 
 
         
