@@ -232,9 +232,7 @@ public class work {
                 return 1;
             } else if (thisF < gameF) {
                 return -1;
-            } else {
-                return 0;
-            }
+            return 0;
         }
 
 
@@ -307,9 +305,7 @@ public class work {
         if(flagSomaParidade == true &&  flagBlankRow == false){
             return true;
         }
-        else{
-            return false;
-        }
+        return false;
     
     }
     
