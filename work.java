@@ -1,42 +1,38 @@
 import java.util.*;
 
-enum Heuristic { BADNUM, MANDIST, NONE}
+enum Heuristic { BADNUM, MANDIST, NONE }
 enum Direction {  LEFT, UP, RIGHT, DOWN }
 
 
 
 public class work {
+   static class Game implements Comparable<Game> {
 
-   static class Game implements Comparable<Game>{
+   //-------------------------------------------------//
+   // CLASS && CONSTRUCTOR                            //
+   //-------------------------------------------------//
 
-    //-------------------------------------------------//
-    // CLASS && CONSTRUCTOR                            //
-    //-------------------------------------------------//
-
-    static int[][] finalConfig;
-    Game pai;
-    int[] pos0 = new int[2];
-    int configInicial[][];
-    int depth;
-    Direction lastDirection;
-    int heuristics;
-    Heuristic heuristica;
+      static int[][] finalConfig;
+      Game pai;
+      int[] pos0 = new int[2];
+      int configInicial[][];
+      int depth;
+      Direction lastDirection;
+      int heuristics;
+      Heuristic heuristica;
     
-    Game(int [][]initialConfig, Heuristic heuristica){
-
-        configInicial = new int[4][4];
-        
-        for(int i = 0; i < 4; i++){
+      Game(int [][]initialConfig, Heuristic heuristica) {
+         configInicial = new int[4][4];
+         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                configInicial[i][j] = initialConfig[i][j];
+               configInicial[i][j] = initialConfig[i][j];
             }
-        }
-
-        this.heuristica = heuristica;
-        HeuristicValue();
-        pos0 = findPos0();
-        depth = 0;
-    }
+         }
+         this.heuristica = heuristica;
+         HeuristicValue();
+         pos0 = findPos0();
+         depth = 0;
+      }
     
     
     //-------------------------------------------------//
@@ -44,166 +40,127 @@ public class work {
     //-------------------------------------------------//
 
     
-    private boolean solved(){
-
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                if(configInicial[i][j] != finalConfig[i][j]){
-                    //System.out.println("Nop");
-                    return false;
-                }
+      private boolean solved() {
+         for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 4; j++) {
+               if(configInicial[i][j] != finalConfig[i][j]) {
+                   //System.out.println("Nop");
+                   return false;
+               }
             }
-        }
-        System.out.println("Resolvido");
-        return true;
-    }
+         }
+         System.out.println("Resolvido");
+         return true;
+      }
 
-    private static void finalConfig(int[][] finalConfigs){
-        finalConfig = new int[4][4];
-        for(int i=0; i < 4; i++){
+      private static void finalConfig(int[][] finalConfigs) {
+         finalConfig = new int[4][4];
+         for(int i=0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                 finalConfig[i][j] = finalConfigs[i][j];
+               finalConfig[i][j] = finalConfigs[i][j];
             }
-        }
-
-    }
+         }
+      }
     
-    private int[] findPos0(){
-
-        int pos_0[] = new int[2];
-
-        for(int i = 0; i < 4; i++){
-            
-            for(int j = 0; j < 4; j++){
-            
-                if(configInicial[i][j] == 0){
-                    
+      private int[] findPos0() {
+         int pos_0[] = new int[2];
+         for(int i = 0; i < 4; i++) {          
+            for(int j = 0; j < 4; j++) {    
+                if(configInicial[i][j] == 0) {        
                     pos_0[0] = j;
                     pos_0[1] = i;
-
                     //System.out.println(pos_0[0] + " " + pos_0[1]);
                     return pos_0;
-
-                }
-                
-                }
+                }               
             }
+         }
             
-            //System.out.println("Return 0: Not found!");
-            return null;
-    }
+         //System.out.println("Return 0: Not found!");
+         return null;
+      }
     
-    void HeuristicValue() {
-        switch(heuristica) {
+      void HeuristicValue() {
+         switch(heuristica) {
             case BADNUM:
-            heuristics = BadNumHeuristic();
-            break;
+               heuristics = BadNumHeuristic();
+               break;
 
             case MANDIST:
-            heuristics = ManDistHeuristic();
-            break;
+               heuristics = ManDistHeuristic();
+               break;
 
             default:
-        }
-    }
+         }
+      }
 
-    int BadNumHeuristic(){
-
-        int soma = 0;
-
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                if(configInicial[i][j] != finalConfig[i][j]){
-                    soma++;
-                }
+      int BadNumHeuristic() {
+         int soma = 0;
+         for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 4; j++) {
+               if(configInicial[i][j] != finalConfig[i][j]) {
+                  soma++;
+               }
             }
-        }
+         }
+         return soma;
+      }
 
+      int ManDistHeuristic() {
+         int soma = 0;
+         int real = 0;
+         int i_x=0,i_y=0,f_x=0,f_y=0;
+         for(int i = 1;i < 16;i++) {
+            for(int x = 0;x < 4;x++) {
+               for(int y = 0;y < 4;y++) {
+                  if(configInicial[x][y] == i) {
+                     i_x = x;
+                     i_y = y;
+                  }
+                  if(finalConfig[x][y] == i){
+                     f_x = x;
+                     f_y = y;
+                  }
+               }
+            }
+            soma += (Math.abs(i_x-f_x) + Math.abs(i_y-f_y));
+         }
         return soma;
-    }
-
-    int ManDistHeuristic(){
-
-        int soma = 0;
-        int real = 0;
-
-        int i_x=0,i_y=0,f_x=0,f_y=0;
-        for(int i=1;i<16;i++){
-
-            for(int x=0;x<4;x++){
-                for(int y=0;y<4;y++){
-                    if(configInicial[x][y] == i){
-                        i_x = x;
-                        i_y = y;
-                    }
-                    if(finalConfig[x][y] == i){
-                        f_x = x;
-                        f_y = y;
-                    }
-                }
-            }
-
-            /*for(int x=0;x<4;x++){
-                for(int y=0;y<4;y++){
-                    if(finalConfig[x][y] == i){
-                        f_x = x;
-                        f_y = y;
-                    }
-                }
-            }
-            */
-        soma += (Math.abs(i_x-f_x) + Math.abs(i_y-f_y));
-    }
-        
-        return soma;
-}
+      }
     
-    void MakeMove(Direction d){
-        // pos0[0]: Y COORDINATOR  ;   pos0[1]: X COORDINATOR
-        
-        int swapIndex_x = -1;
-        int swapIndex_y = -1;
+      void MakeMove(Direction d) {
+         // pos0[0]: Y COORDINATOR  ;   pos0[1]: X COORDINATOR 
+         int swapIndex_x = -1;
+         int swapIndex_y = -1;
+         //System.out.println("Pos[0]: " + pos0[0] + " " + "Pos[1]: " + pos0[1]);
 
-        //System.out.println("Pos[0]: " + pos0[0] + " " + "Pos[1]: " + pos0[1]);
-
-        switch(d){
+         switch(d){
             case UP:
-                
-                swapIndex_x = pos0[1] + 1;
-                swapIndex_y =  pos0[0];
-                
-                break;
-            case DOWN:
-              
-                swapIndex_x = pos0[1] - 1;
-                swapIndex_y =  pos0[0];
-                
-                break;
-            case LEFT:
-               
-                swapIndex_x = pos0[1];
-                swapIndex_y =  pos0[0] + 1;
-                
-                break;
+               swapIndex_x = pos0[1] + 1;
+               swapIndex_y =  pos0[0];           
+               break;
+            case DOWN:           
+               swapIndex_x = pos0[1] - 1;
+               swapIndex_y =  pos0[0];   
+               break;
+            case LEFT:               
+               swapIndex_x = pos0[1];
+               swapIndex_y =  pos0[0] + 1;             
+               break;
             case RIGHT:
-                
+               swapIndex_x = pos0[1];
+               swapIndex_y =  pos0[0] - 1; 
+               break;
 
-                swapIndex_x = pos0[1];
-                swapIndex_y =  pos0[0] - 1; 
-              
-                break;
+            default:
+         }
 
-                default:
-            }
+         lastDirection = d;
+         configInicial[pos0[1]][pos0[0]] = configInicial[swapIndex_x][swapIndex_y];
+         configInicial[swapIndex_x][swapIndex_y] = 0;
+         pos0 = findPos0();
+     }
 
-            lastDirection = d;
-            configInicial[pos0[1]][pos0[0]] = configInicial[swapIndex_x][swapIndex_y];
-            configInicial[swapIndex_x][swapIndex_y] = 0;
-            pos0 = findPos0();
-
-    }
-
-    LinkedList<Game> MakeDescendants() {
+      LinkedList<Game> MakeDescendants() {
         Vector<Direction> moves = possibleMoves();
         LinkedList<Game> descendents = new LinkedList<Game>();
         for(Direction d : moves) {
