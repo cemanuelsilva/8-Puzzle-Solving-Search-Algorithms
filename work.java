@@ -212,15 +212,21 @@ public class work {
 
     LinkedList<Direction> GetPath() {
         LinkedList<Direction> path = new LinkedList<Direction>();
+        LinkedList<Game> tabuleiros = new LinkedList<Game>();
         Game game = this;
         int i = 1;
         while(game.pai != null) {//Tá na ordem contrária
             path.addFirst(game.lastDirection);
             game = game.pai;
-            System.out.println("------ Move: " + i + " ------");
-            game.print2DD();
+            tabuleiros.add(game);
             i++;
         }
+
+        for(int j = tabuleiros.size()-1; j > 0; j--){
+            System.out.println(j);
+            tabuleiros.get(j).print2DD();
+        }
+
         return path;
     }
 
@@ -232,8 +238,10 @@ public class work {
                 return 1;
             } else if (thisF < gameF) {
                 return -1;
-            return 0;
+
         }
+        return 0;
+    }
 
 
     public void print2DD()
@@ -365,19 +373,25 @@ public class work {
     static Stack<Direction> dfs(int[][] initialConfig, Heuristic heuristica){
 
         Game tabuleiro = new Game(initialConfig, heuristica);
+        HashSet<String> ciclos = new HashSet<>();
 
         
         Stack<Direction> path = new Stack<Direction>();
         Stack<Game> pilha = new Stack<Game>();
         pilha.push(tabuleiro);
+
         while(!pilha.isEmpty()) {
             Game node = pilha.pop();
+            ciclos.add(node.toString());
             if(node.solved()) {
                 PrintPath(node);
                 return path;
             }
             LinkedList<Game> descendents = node.MakeDescendants();
             for(Game desc : descendents) {
+                if(ciclos.contains(desc.toString())){
+                    continue;
+                }
                 pilha.push(desc);
             }
             if(node.lastDirection != null) path.push(node.lastDirection);
@@ -390,12 +404,13 @@ public class work {
     public static void bfs(int [][] configInicial, Heuristic heuristica){
 
         Game tabuleiro = new Game(configInicial, heuristica);
-
+        HashSet<String> ciclos = new HashSet<>();
             Queue<Game> q = new LinkedList<Game>();
             q.add(tabuleiro);
 
             while(!q.isEmpty()) {
                 Game node = q.remove();
+                ciclos.add(node.toString());
                 if(node.solved()) {
                     PrintPath(node);
                     return;
@@ -405,6 +420,9 @@ public class work {
                 
                 LinkedList<Game> descendentList = node.MakeDescendants();
                 for(Game desc : descendentList) {
+                    if(ciclos.contains(desc.toString())){
+                        continue;
+                    }
                     desc.pai = node;
                     q.add(desc);
 
@@ -452,43 +470,60 @@ public class work {
     }
 
 
-    private static void Gulosa(int[][] initialConfig, Heuristic heuristica) {
-        Game g = new Game(initialConfig, heuristica);
+     private static void Gulosa(int[][] initialConfig, Heuristic h) {
+        
+        Game g = new Game(initialConfig, h);
         System.out.println("Greedy:");
+        HashSet<String> ciclos = new HashSet<>();
 
+        
         LinkedList<Direction> path = new LinkedList<Direction>();
         PriorityQueue<Game> pq = new PriorityQueue<Game>();
         pq.add(g);
+
         while(!pq.isEmpty()) {
             Game node = pq.poll();
-            // node.PrintBoard();
+            ciclos.add(node.toString());
             if(node.solved()) {
                 PrintPath(node);
                 return;
             }
-            pq.add(node.GreedyDescendent());
-            if(node.lastDirection != null) path.add(node.lastDirection);
+
+            LinkedList<Game> descendents = node.MakeDescendants();
+            for(Game desc : descendents) {
+                if(ciclos.contains(desc.toString())) {
+                    continue;
+                }
+                desc.pai = node;
+                pq.add(desc);
+            }
         }
-        
         return;
     }
 
 
+
     private static void A_Star(int[][] initialConfig, Heuristic heuristic) {
         Game g = new Game(initialConfig, heuristic);
-
+        HashSet<String> ciclo = new HashSet<String>();
+    
         System.out.println("A*:");
 
         PriorityQueue<Game> pq = new PriorityQueue<Game>();
         pq.add(g);
+
         while(!pq.isEmpty()) {
             Game node = pq.poll();
+            ciclo.add(node.toString());
             if(node.solved()) {
                 PrintPath(node);
                 return;
             }
             LinkedList<Game> descendents = node.MakeDescendants();
             for(Game desc : descendents) {
+                if(ciclo.contains(desc.toString())){
+                    continue;
+                }
                 desc.pai = node;
                 desc.depth = node.depth + 1;
                 pq.add(desc);
@@ -586,7 +621,7 @@ public class work {
         if(thereIsNoSolution(initialConfig, finalConfig)){
 
             Game.finalConfig(finalConfig);
-            A_Star(initialConfig, Heuristic.BADNUM);
+            A_Star(initialConfig, Heuristic.NONE);
             //bfs(initialConfig, Heuristic.NONE);
             //dfs(initialConfig, Heuristic.NONE);
             //greedy(initialConfig, Heuristic.MANDIST);
