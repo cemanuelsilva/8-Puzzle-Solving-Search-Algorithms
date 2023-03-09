@@ -49,7 +49,7 @@ public class work {
                }
             }
          }
-         System.out.println("Resolvido");
+         System.out.println("Done!");
          return true;
       }
 
@@ -226,7 +226,7 @@ public class work {
         int x = 0;
         for(int j = tabuleiros.size()-1; j > 0; j--){
             System.out.println("--------------------");
-            System.out.println("Jogada Numero: " + x );
+            System.out.println("Play Number: " + x );
             tabuleiros.get(j).print2DD();
             x++;
         }
@@ -317,7 +317,9 @@ public class work {
         if(flagSomaParidade == true &&  flagBlankRow == false){
             return true;
         }
-        return false;
+        else{
+            return false;
+        }
     
     }
     
@@ -336,11 +338,11 @@ public class work {
         result_configFinal = verifyParidade(configuracaoFinal, configFinal);
     
         if(result_configInicial == result_configFinal){
-            System.out.println("EXISTE SOLUÇÃO!");
+            System.out.println("There is a solution!");
             return true;
         }
         else{
-            System.out.println("NÃO É POSSIVEL CHEGAR A UMA CONFIGURAÇÃO FINAL!");
+            System.out.println("Sorry, not possible!");
             return false;
         }
     
@@ -376,6 +378,7 @@ public class work {
 
     static Stack<Direction> dfs(int[][] initialConfig, Heuristic heuristica){
 
+        System.out.println("DFS:");
 
         long startTime = System.nanoTime();
         long memory = 0;
@@ -415,6 +418,8 @@ public class work {
 
     public static void bfs(int [][] configInicial, Heuristic heuristica){
 
+        System.out.println("BFS:");
+
         long memory = 0;
         long startTime = System.nanoTime();
         Game tabuleiro = new Game(configInicial, heuristica);
@@ -453,7 +458,7 @@ public class work {
             
     }
 
-    static void bfs_iterativa(int[][] initialConfig, Heuristic heuristica){
+    static void dfs_iterativa(int[][] initialConfig, Heuristic heuristica){
         
         long memory = 0;
         long startTime = System.nanoTime();
@@ -488,7 +493,7 @@ public class work {
             }
         }
         
-        System.out.print("Não encontrado");
+        System.out.print("Not found");
         return ;
 
     }
@@ -669,7 +674,9 @@ public class work {
             //bfs(initialConfig, Heuristic.NONE);
             //dfs(initialConfig, Heuristic.NONE);
             //Gulosa(initialConfig, Heuristic.MANDIST);
-            A_Star(initialConfig, Heuristic.MANDIST);
+            //Gulosa(initialConfig, Heuristic.BADNUM);
+            //A_Star(initialConfig, Heuristic.MANDIST);
+            //A_Star(initialConfig, Heuristic.BADNUM);
 
         }
         
