@@ -217,7 +217,7 @@ public class work {
             i++;
         }
         
-    
+        /* 
         int x = 0;
         for(int j = tabuleiros.size()-1; j > 0; j--){
             System.out.println("--------------------");
@@ -225,6 +225,7 @@ public class work {
             tabuleiros.get(j).print2DD();
             x++;
         }
+        */
 
         return path;
     }
@@ -454,47 +455,7 @@ public class work {
             
     }
 
-    static void dfs_iterativa(int[][] initialConfig, Heuristic heuristica){
-        
-        long memory = 0;
-        long startTime = System.nanoTime();
-        int depth_lim = 14;
-        Game g = new Game(initialConfig, heuristica);
-
-
-        
-        Stack<Direction> path = new Stack<Direction>();
-        Stack<Game> s = new Stack<Game>();
-
-        s.push(g);
-
-        while(!s.isEmpty()) {
-            Game node = s.pop();
-            memory++;
-            // node.PrintBoard();
-            if(node.solved()) {
-                long endTime = System.nanoTime();
-                long duration = ((endTime - startTime) / 1000000);
-                PrintPath(node,duration,memory);
-                return ;
-            }
-            if(node.depth > depth_lim) {
-                continue;
-            }
-            LinkedList<Game> descendents = node.MakeDescendants();
-            for(Game desc : descendents) {
-                desc.pai = node;
-                desc.depth = node.depth + 1;
-                s.push(desc);
-            }
-        }
-        
-        System.out.print("Not found");
-        return ;
-
-    }
-
-
+  
      private static void Gulosa(int[][] initialConfig, Heuristic h) {
         
         long memory = 0;
@@ -670,12 +631,12 @@ public class work {
 
             
             
-            //bfs(initialConfig, Heuristic.NONE);
+            bfs(initialConfig, Heuristic.NONE);
             //dfs(initialConfig, Heuristic.NONE);
             //Gulosa(initialConfig, Heuristic.MANDIST);
             //Gulosa(initialConfig, Heuristic.BADNUM);
-            A_Star(initialConfig, Heuristic.BADNUM);
-            //A_Star(initialConfig, Heuristic.BADNUM);
+            //A_Star(initialConfig, Heuristic.MANDIST);
+            //A_Star(initialConfig, Heuristic.MANDIST);
 
         }
         
