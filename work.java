@@ -1,6 +1,6 @@
 import java.util.*;
 
-enum Heuristic { BADNUM, MANDIST, NONE }
+enum Heuristic {  BADNUM, MANDIST, NONE}  // up means: moving a piece up
 enum Direction {  LEFT, UP, RIGHT, DOWN }
 
 
@@ -158,7 +158,19 @@ public class work {
          configInicial[pos0[1]][pos0[0]] = configInicial[swapIndex_x][swapIndex_y];
          configInicial[swapIndex_x][swapIndex_y] = 0;
          pos0 = findPos0();
+         HeuristicValue();
      }
+
+     @Override
+    public String toString() {
+        String str = "";
+        for(int i=0; i<4; i++) {
+            for(int j = 0; j<4; j++){
+            str += configInicial[i][j] + "-";
+            }
+        }
+        return str;
+    }
 
       LinkedList<Game> MakeDescendants() {
         Vector<Direction> moves = possibleMoves();
@@ -173,24 +185,7 @@ public class work {
         return descendents;
     }
 
-    /* 
-    Game GreedyDescendent() {
-        Vector<Direction> moves = possibleMoves();
-
-        Game bestDescendent = new Game(configInicial, heuristica);
-        bestDescendent.MakeMove(moves.remove(0));
-
-        for(Direction d : moves) {
-            Game newDescendent = new Game(configInicial, heuristica);
-            newDescendent.MakeMove(d);
-            if(newDescendent.heuristics <= bestDescendent.heuristics) {
-                bestDescendent = newDescendent;
-            }
-        }
-        return bestDescendent;
-    }
-    */
-
+   
     Vector<Direction> possibleMoves(){
 
         Vector<Direction> moves = new Vector<Direction>();
@@ -242,10 +237,11 @@ public class work {
                 return 1;
             } else if (thisF < gameF) {
                 return -1;
-
+            } else {
+                return 0;
+            }
         }
-        return 0;
-    }
+    
 
 
     public void print2DD()
@@ -544,7 +540,7 @@ public class work {
         long startTime = System.nanoTime();
         Game g = new Game(initialConfig, heuristic);
         HashSet<String> ciclo = new HashSet<String>();
-    
+        int x = 0;
         System.out.println("A*:");
 
         PriorityQueue<Game> pq = new PriorityQueue<Game>();
@@ -564,11 +560,14 @@ public class work {
             LinkedList<Game> descendents = node.MakeDescendants();
             for(Game desc : descendents) {
                 if(ciclo.contains(desc.toString())){
+                    //x++;
+                    //System.out.println("Entrei: " + x);
                     continue;
                 }
                 desc.pai = node;
                 desc.depth = node.depth + 1;
                 pq.add(desc);
+                //System.out.println("Dept: " + desc.depth);
             }
         }
 
@@ -675,7 +674,7 @@ public class work {
             //dfs(initialConfig, Heuristic.NONE);
             //Gulosa(initialConfig, Heuristic.MANDIST);
             //Gulosa(initialConfig, Heuristic.BADNUM);
-            //A_Star(initialConfig, Heuristic.MANDIST);
+            A_Star(initialConfig, Heuristic.BADNUM);
             //A_Star(initialConfig, Heuristic.BADNUM);
 
         }
