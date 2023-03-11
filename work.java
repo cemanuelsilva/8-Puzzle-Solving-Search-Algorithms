@@ -286,9 +286,11 @@ public class work {
     
             //System.out.println(somaParidades);
         }
-    
+        
+        //System.out.println(somaParidades);
+
         if(somaParidades % 2 == 0){
-            flagSomaParidade = true;
+            flagSomaParidade = false;
         }
     
     
@@ -299,7 +301,7 @@ public class work {
             for(int j = 0; j > 4; j++){
                 
                 if(configMatrix2[i][j] == 0){
-                    if(i % 2 == 0){
+                    if(i+1 % 2 == 1){
                         flagBlankRow = true;
                     }
                     
@@ -311,7 +313,7 @@ public class work {
         }
     
     
-        if(flagSomaParidade == true &&  flagBlankRow == false){
+        if(flagSomaParidade == flagBlankRow){
             return true;
         }
         else{
@@ -346,29 +348,6 @@ public class work {
     }
     
     
-    
-    //-------------------------------------------------//
-    // General                                         //
-    //-------------------------------------------------//
-    
-    /*
-    private String GeneralSearchALgorithm(int [][]configInicial, int [][]configFinal){
-        if (thereIsNoSolution(configInicial,configFinal) == false){
-            return "It is impossible to reach a solution";
-        }
-        
-        Queue<Integer> = new Queue<Integer>;
-        while(!){
-            node = 
-            if( == configFinal){
-                return path;
-            }
-            decendantList = MakeDescendants(node);
-
-        }
-    }
-    */
-
     //-------------------------------------------------//
     // SEARCH ALGORITHMS                               //
     //-------------------------------------------------//
@@ -377,8 +356,9 @@ public class work {
 
         System.out.println("DFS:");
 
+        Runtime runtime = Runtime.getRuntime();
         long startTime = System.nanoTime();
-        long memory = 0;
+        long nodes = 0;
         
         Game tabuleiro = new Game(initialConfig, heuristica);
         HashSet<String> ciclos = new HashSet<>();
@@ -390,13 +370,14 @@ public class work {
         
         while(!pilha.isEmpty()) {
             Game node = pilha.pop();
-            memory++;
+            nodes++;
             ciclos.add(node.toString());
             if(node.solved()) {
     
                 long endTime = System.nanoTime();
                 long duration = ((endTime - startTime) / 1000000 );
-                PrintPath(node,duration,memory);
+                double memory = (runtime.totalMemory() - runtime.freeMemory());
+                PrintPath(node,duration,memory, nodes);
                 return path;
             }
             LinkedList<Game> descendents = node.MakeDescendants();
@@ -416,23 +397,25 @@ public class work {
     public static void bfs(int [][] configInicial, Heuristic heuristica){
 
         System.out.println("BFS:");
-
-        long memory = 0;
+        
+        Runtime runtime = Runtime.getRuntime();
+        long nodes = 0;
         long startTime = System.nanoTime();
         Game tabuleiro = new Game(configInicial, heuristica);
         HashSet<String> ciclos = new HashSet<>();
         Queue<Game> q = new LinkedList<Game>();
         q.add(tabuleiro);
-
-            while(!q.isEmpty()) {
-                Game node = q.remove();
-                memory++;
-                ciclos.add(node.toString());
-                if(node.solved()) {
-
+        
+        while(!q.isEmpty()) {
+            Game node = q.remove();
+            nodes++;
+            ciclos.add(node.toString());
+            if(node.solved()) {
+                
                     long endTime = System.nanoTime();
                     long duration = ((endTime - startTime) / 1000000);
-                    PrintPath(node,duration,memory);
+                    double memory = (runtime.totalMemory() - runtime.freeMemory());
+                    PrintPath(node,duration,memory,nodes);
                     return;
                 
                     
@@ -455,10 +438,70 @@ public class work {
             
     }
 
+
+    static void Busca_iterativa_limitada_em_profundidade(int[][] configInicial, Heuristic heuristica){
+        
+        int depth_lim = 3;
+
+        
+        System.out.println("DFSI:");
+        
+        Runtime runtime = Runtime.getRuntime();
+        long nodes = 0;
+        long startTime = System.nanoTime();
+        Game g = new Game(configInicial, heuristica);
+        HashSet<String> ciclos = new HashSet<>();
+        
+        
+        Stack<Direction> path = new Stack<Direction>();
+        Stack<Game> s = new Stack<Game>();
+        Stack<Game> newS = new Stack<Game>();
+        s.push(g);
+        while(depth_lim <= 50) {
+
+            while(!s.isEmpty()) {
+                
+                Game node = s.pop();
+                ciclos.add(node.toString());
+                nodes++;
+                
+                if(node.solved()) {
+                    
+                    long endTime = System.nanoTime();
+                    long duration = ((endTime - startTime) / 1000000);
+                    double memory = (runtime.totalMemory() - runtime.freeMemory());
+                    PrintPath(node, duration, memory,nodes);
+                    return ;
+                }
+
+                if(node.depth > depth_lim) {
+                    newS.push(node);
+                    continue;
+                }
+
+                LinkedList<Game> descendents = node.MakeDescendants();
+                for(Game desc : descendents) {
+                    if(ciclos.contains(desc.toString())) {
+                        continue;
+                    }
+                    desc.pai = node;
+                    desc.depth = node.depth + 1;
+                    s.push(desc);
+                }
+            }
+            s = (Stack<Game>) newS.clone();
+            newS.clear();
+            depth_lim += 3;
+        }
+        
+        return;
+    }
+
   
      private static void Gulosa(int[][] initialConfig, Heuristic h) {
         
-        long memory = 0;
+        Runtime runtime = Runtime.getRuntime();
+        long nodes = 0;
         long startTime = System.nanoTime();
         Game g = new Game(initialConfig, h);
         System.out.println("Greedy:");
@@ -471,13 +514,14 @@ public class work {
 
         while(!pq.isEmpty()) {
             Game node = pq.poll();
-            memory++;
+            nodes++;
             ciclos.add(node.toString());
             if(node.solved()) {
                 
                 long endTime = System.nanoTime();
                 long duration = ((endTime - startTime) / 1000000);
-                PrintPath(node,duration,memory);
+                double memory = (runtime.totalMemory() - runtime.freeMemory());
+                PrintPath(node,duration,memory,nodes);
                 return;
             }
 
@@ -497,7 +541,8 @@ public class work {
 
     private static void A_Star(int[][] initialConfig, Heuristic heuristic) {
         
-        long memory = 0;
+        Runtime runtime = Runtime.getRuntime();
+        long nodes = 0;
         long startTime = System.nanoTime();
         Game g = new Game(initialConfig, heuristic);
         HashSet<String> ciclo = new HashSet<String>();
@@ -509,13 +554,14 @@ public class work {
 
         while(!pq.isEmpty()) {
             Game node = pq.poll();
-            memory++;
+            nodes++;
             ciclo.add(node.toString());
             if(node.solved()) {
 
                 long endTime = System.nanoTime();
                 long duration = ((endTime - startTime) / 1000000);
-                PrintPath(node,duration,memory);
+                double memory = (runtime.totalMemory() - runtime.freeMemory());
+                PrintPath(node,duration,memory,nodes);
                 return;
             }
             LinkedList<Game> descendents = node.MakeDescendants();
@@ -539,16 +585,16 @@ public class work {
 
 
 
-    public static void PrintPath(Game node, long time, long memory) {
+    public static void PrintPath(Game node, long time, double memory, long nodes) {
         LinkedList<Direction> path = node.GetPath();
 
         System.out.println("-------------------------------");
         System.out.println("Heuristic: " + node.heuristica);
         System.out.println("Number of moves: " + path.size());
         System.out.println("Time: " + time + "ms");
-        System.out.println("Memory: " + memory);
+        System.out.printf("Nodes: %d  Memory: %.2f MB\n", nodes, memory/(1024*1024));
         System.out.println("Path: " + path);
-        System.out.println();
+        System.out.println("-------------------------------");
     }
 
 
@@ -631,8 +677,9 @@ public class work {
 
             
             
-            bfs(initialConfig, Heuristic.NONE);
             //dfs(initialConfig, Heuristic.NONE);
+            Busca_iterativa_limitada_em_profundidade(initialConfig, Heuristic.NONE);
+            //bfs(initialConfig, Heuristic.NONE);
             //Gulosa(initialConfig, Heuristic.MANDIST);
             //Gulosa(initialConfig, Heuristic.BADNUM);
             //A_Star(initialConfig, Heuristic.MANDIST);
