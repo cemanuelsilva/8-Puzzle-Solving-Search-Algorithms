@@ -403,11 +403,11 @@ public class work {
         long startTime = System.nanoTime();
         Game tabuleiro = new Game(configInicial, heuristica);
         HashSet<String> ciclos = new HashSet<>();
-        Queue<Game> q = new LinkedList<Game>();
-        q.add(tabuleiro);
+        Queue<Game> queue = new LinkedList<Game>();
+        queue.add(tabuleiro);
         
-        while(!q.isEmpty()) {
-            Game node = q.remove();
+        while(!queue.isEmpty()) {
+            Game node = queue.remove();
             nodes++;
             ciclos.add(node.toString());
             if(node.solved()) {
@@ -427,7 +427,7 @@ public class work {
                         continue;
                     }
                     desc.pai = node;
-                    q.add(desc);
+                    queue.add(desc);
 
                     //desc.print2DD();
                     //System.out.println("---");
@@ -449,21 +449,20 @@ public class work {
         Runtime runtime = Runtime.getRuntime();
         long nodes = 0;
         long startTime = System.nanoTime();
-        Game g = new Game(configInicial, heuristica);
+        Game tabuleiro = new Game(configInicial, heuristica);
         HashSet<String> ciclos = new HashSet<>();
         
         
         Stack<Direction> path = new Stack<Direction>();
-        Stack<Game> s = new Stack<Game>();
-        Stack<Game> newS = new Stack<Game>();
-        s.push(g);
+        Stack<Game> pilha = new Stack<Game>();
+        Stack<Game> newPilha = new Stack<Game>();
+        pilha.push(tabuleiro);
         while(depth_lim <= 50) {
 
-            while(!s.isEmpty()) {
+            while(!pilha.isEmpty()) {
                 
-                Game node = s.pop();
+                Game node = pilha.pop();
                 ciclos.add(node.toString());
-                nodes++;
                 
                 if(node.solved()) {
                     
@@ -473,9 +472,10 @@ public class work {
                     PrintPath(node, duration, memory,nodes);
                     return ;
                 }
-
+                
                 if(node.depth > depth_lim) {
-                    newS.push(node);
+                    newPilha.push(node);
+                    nodes++;
                     continue;
                 }
 
@@ -486,11 +486,11 @@ public class work {
                     }
                     desc.pai = node;
                     desc.depth = node.depth + 1;
-                    s.push(desc);
+                    pilha.push(desc);
                 }
             }
-            s = (Stack<Game>) newS.clone();
-            newS.clear();
+            pilha = (Stack<Game>) newPilha.clone();
+            newPilha.clear();
             depth_lim += 3;
         }
         
@@ -503,17 +503,17 @@ public class work {
         Runtime runtime = Runtime.getRuntime();
         long nodes = 0;
         long startTime = System.nanoTime();
-        Game g = new Game(initialConfig, h);
+        Game tabuleiro = new Game(initialConfig, h);
         System.out.println("Greedy:");
         HashSet<String> ciclos = new HashSet<>();
 
         
         LinkedList<Direction> path = new LinkedList<Direction>();
-        PriorityQueue<Game> pq = new PriorityQueue<Game>();
-        pq.add(g);
+        PriorityQueue<Game> PriorityQueue = new PriorityQueue<Game>();
+        PriorityQueue.add(tabuleiro);
 
-        while(!pq.isEmpty()) {
-            Game node = pq.poll();
+        while(!PriorityQueue.isEmpty()) {
+            Game node = PriorityQueue.poll();
             nodes++;
             ciclos.add(node.toString());
             if(node.solved()) {
@@ -531,7 +531,7 @@ public class work {
                     continue;
                 }
                 desc.pai = node;
-                pq.add(desc);
+                PriorityQueue.add(desc);
             }
         }
         return;
@@ -544,16 +544,16 @@ public class work {
         Runtime runtime = Runtime.getRuntime();
         long nodes = 0;
         long startTime = System.nanoTime();
-        Game g = new Game(initialConfig, heuristic);
+        Game tabuleiro = new Game(initialConfig, heuristic);
         HashSet<String> ciclo = new HashSet<String>();
         int x = 0;
         System.out.println("A*:");
 
-        PriorityQueue<Game> pq = new PriorityQueue<Game>();
-        pq.add(g);
+        PriorityQueue<Game> PriorityQueue = new PriorityQueue<Game>();
+        PriorityQueue.add(tabuleiro);
 
-        while(!pq.isEmpty()) {
-            Game node = pq.poll();
+        while(!PriorityQueue.isEmpty()) {
+            Game node = PriorityQueue.poll();
             nodes++;
             ciclo.add(node.toString());
             if(node.solved()) {
@@ -573,7 +573,7 @@ public class work {
                 }
                 desc.pai = node;
                 desc.depth = node.depth + 1;
-                pq.add(desc);
+                PriorityQueue.add(desc);
                 //System.out.println("Dept: " + desc.depth);
             }
         }
@@ -678,12 +678,12 @@ public class work {
             
             
             //dfs(initialConfig, Heuristic.NONE);
-            Busca_iterativa_limitada_em_profundidade(initialConfig, Heuristic.NONE);
+            //Busca_iterativa_limitada_em_profundidade(initialConfig, Heuristic.NONE);
             //bfs(initialConfig, Heuristic.NONE);
             //Gulosa(initialConfig, Heuristic.MANDIST);
             //Gulosa(initialConfig, Heuristic.BADNUM);
             //A_Star(initialConfig, Heuristic.MANDIST);
-            //A_Star(initialConfig, Heuristic.MANDIST);
+            //A_Star(initialConfig, Heuristic.BADNUM);
 
         }
         
