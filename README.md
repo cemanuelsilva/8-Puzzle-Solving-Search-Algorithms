@@ -1,1 +1,1 @@
-# Trabalho1IA
+# Solving 8-Puzzle using different Search Algorithms
