@@ -4,3 +4,4 @@
 
 - [ ] Fix Loops (HashSet ciclos)
 - [ ] Fix algorithms
+- [ ] Organize code
